@@ -1,0 +1,21 @@
+<xml>
+	<!-- decorators appear on every card. They are the suit and rank in the corners. -->
+	<decorator type="letter" x="-0.89" y="1.37" z="0" flip="0" scale="1"/>
+	<decorator type="suit" x="-0.89" y="1.37" z="0" flip="0" scale="1"/>
+	<decorator type="suit" x="0.89" y="-1.37" z="0" flip="1" scale="1"/>
+	<decorator type="letter" x="0.89" y="-1.37" z="0" flip="1" scale="1"/>
+	<!-- A list of all cards that defines where pips are placed. -->
+  <card rank="0" face="Cat1"/>
+  <card rank="1" face="Cat2"/>
+	<card rank="2" face="Cat3"/>
+	<card rank="3" face="Cat4"/>
+	<card rank="4" face="Cat5"/>
+	<card rank="5" face="Cat6"/>
+	<card rank="6" face="Cat7"/>
+	<card rank="7" face="Cat8"/>
+	<card rank="8" face="Cat9"/>
+	<card rank="9" face="Cat10"/>
+	<card rank="10" face="Cat11"/>
+	<card rank="11" face="Cat12"/>
+	<card rank="12" face="Cat13"/>
+</xml>
