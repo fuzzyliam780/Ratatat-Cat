@@ -190,7 +190,7 @@ public class Bartok : MonoBehaviour {
         }
         
         // Check to see if the current player has won
-        if(CURRENT_PLAYER.hand.Count == 0)
+        if(CURRENT_PLAYER.hand.Length == 0)
         {
             // The player that just played has won!
             phase = TurnPhase.gameOver;
@@ -210,16 +210,17 @@ public class Bartok : MonoBehaviour {
     public bool ValidPlay(CardBartok cb)
     {
         // It's a valid play if the rank is the same
-        if (cb.rank == targetCard.rank) return (true);
+        //if (cb.rank == targetCard.rank) return (true);
 
         // It's a valid play if the suit is the same
-        if(cb.suit == targetCard.suit)
-        {
-            return (true);
-        }
+        //if(cb.suit == targetCard.suit)
+        //{
+        //    return (true);
+        //}
 
         // Otherwise, return false
-        return (false);
+        //return (false);
+        return (true);
     }
 
     // This makes a new card the target
