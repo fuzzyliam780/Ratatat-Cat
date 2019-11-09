@@ -23,21 +23,30 @@ public class Player {
         if (hand == null) hand = new CardBartok[4];
 
         // Add the card to the hand
-        if (hand.Length != 4)
+        bool CardAdded = false;
+        for (int i = 0;i < 4; i++)
         {
-            hand[hand.Length] = eCB;
+            if (hand[i] == null && !CardAdded)
+            {
+                hand[i] = eCB;
+                CardAdded = true;
+            }
         }
+        //if (hand.Length != 4)
+        //{
+        //    hand[hand.Length] = eCB;
+        //}
         
 
         //Sort the cards by rank using LINQ if this is a human
-        if (type == PlayerType.human)
-        {
-            // This is the LINQ call
-            hand = hand.OrderBy(cd => cd.rank).ToArray();
-            // Note: LINQ operations can be a bit slow (like it could take a
-            // couple of milliseconds), but since we're only doing it once
-            // every round, it isn't a problem.
-        }
+        //if (type == PlayerType.human)
+        //{
+        //    // This is the LINQ call
+        //    hand = hand.OrderBy(cd => cd.rank).ToArray();
+        //    // Note: LINQ operations can be a bit slow (like it could take a
+        //    // couple of milliseconds), but since we're only doing it once
+        //    // every round, it isn't a problem.
+        //}
 
         eCB.SetSortingLayerName("10"); // Sorts the moving card to the top
         eCB.eventualSortLayer = handSlotDef.layerName;
@@ -80,40 +89,44 @@ public class Player {
         Quaternion rotQ;
         for (int i=0; i<hand.Length; i++)
         {
-            rot = startRot - Bartok.S.handFanDegrees * i;
-            rotQ = Quaternion.Euler(0, 0, rot);
-
-            pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
-
-            pos = rotQ * pos;
-
-            // Add the base position of the player's hand (which will be at the
-            // bottom-center of the fan of the cards)
-            pos += handSlotDef.pos;
-            pos.z = -0.5f * i;
-
-            // If not the initial deal, start moving the card immediately.
-            if(Bartok.S.phase != TurnPhase.idle)
+            if (hand[i] != null)
             {
-                hand[i].timeStart = 0;
+                rot = startRot - Bartok.S.handFanDegrees * i;
+                rotQ = Quaternion.Euler(0, 0, rot);
+
+                pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
+
+                pos = rotQ * pos;
+
+                // Add the base position of the player's hand (which will be at the
+                // bottom-center of the fan of the cards)
+                pos += handSlotDef.pos;
+                pos.z = -0.5f * i;
+
+                // If not the initial deal, start moving the card immediately.
+                if (Bartok.S.phase != TurnPhase.idle)
+                {
+                    hand[i].timeStart = 0;
+                }
+
+                // Set the localPosition and rotation of the ith card in the hand
+                hand[i].MoveTo(pos, rotQ); // Tell CardBartok to interpolate
+                hand[i].state = CBState.toHand;
+                // After the move, CardBartok will set the state to CBState.hand
+
+                /* <= This begins a multiline comment
+                hand[i].transform.localPosition = pos;
+                hand[i].transform.rotation = rotQ;
+                hand[i].state = CBState.hand; 
+                This ends the multiline comment => */
+
+                hand[i].faceUp = (type == PlayerType.human);
+
+                // Set the SortOrder of the cards so that they overlap properly
+                hand[i].eventualSortOrder = i * 4;
+                //hand[i].SetSortOrder(i * 4);
             }
 
-            // Set the localPosition and rotation of the ith card in the hand
-            hand[i].MoveTo(pos, rotQ); // Tell CardBartok to interpolate
-            hand[i].state = CBState.toHand;
-            // After the move, CardBartok will set the state to CBState.hand
-
-            /* <= This begins a multiline comment
-            hand[i].transform.localPosition = pos;
-            hand[i].transform.rotation = rotQ;
-            hand[i].state = CBState.hand; 
-            This ends the multiline comment => */
-
-            hand[i].faceUp = (type == PlayerType.human);
-
-            // Set the SortOrder of the cards so that they overlap properly
-            hand[i].eventualSortOrder = i * 4;
-            //hand[i].SetSortOrder(i * 4);
         }
     }
 
