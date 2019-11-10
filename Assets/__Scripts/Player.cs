@@ -156,7 +156,7 @@ public class Player {
         if(validCards.Count == 0)
         {
             // ... then draw a card
-            cb = AddCard(Bartok.S.Draw());
+            cb = AddCard(Bartok.S.DrawFromDrawPile());
             cb.callbackPlayer = this;
             return;
         }
