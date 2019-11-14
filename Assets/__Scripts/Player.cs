@@ -87,21 +87,64 @@ public class Player {
         Vector3 pos;
         float rot;
         Quaternion rotQ;
+        switch (playerNum)
+        {
+            case 1:
+                rotQ = Quaternion.Euler(0, 0, 0);
+                break;
+            case 2:
+                rotQ = Quaternion.Euler(0, 0, -90);
+                break;
+            case 3:
+                rotQ = Quaternion.Euler(0, 0, 180);
+                break;
+            case 4:
+                rotQ = Quaternion.Euler(0, 0, -270);
+                break;
+            default:
+                rotQ = Quaternion.Euler(0, 0, 0);
+                break;
+        }
         for (int i=0; i<hand.Length; i++)
         {
             if (hand[i] != null)
             {
                 rot = startRot - Bartok.S.handFanDegrees * i;
-                rotQ = Quaternion.Euler(0, 0, rot);
+                //rotQ = Quaternion.Euler(0, 0, rot);
+                
 
-                pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
+                //pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
 
-                pos = rotQ * pos;
+                //pos = rotQ * pos;
 
                 // Add the base position of the player's hand (which will be at the
                 // bottom-center of the fan of the cards)
-                pos += handSlotDef.pos;
-                pos.z = -0.5f * i;
+                pos = handSlotDef.pos;
+                //pos.z = -0.5f * i;
+
+                switch (playerNum)
+                {
+                    case 1:
+                        pos.x = -4.5f;
+                        pos.x += 3 * i;
+                        break;
+                    case 2:
+                        pos.y = 4.5f;
+                        pos.y -= 3 * i;
+                        break;
+                    case 3:
+                        pos.x = -4.5f;
+                        pos.x += 3 * i;
+                        break;
+                    case 4:
+                        pos.y = -4.5f;
+                        pos.y += 3 * i;
+                        break;
+                    default:
+                        pos.x = -4.5f;
+                        pos.x += 3 * i;
+                        break;
+                }
 
                 // If not the initial deal, start moving the card immediately.
                 if (Bartok.S.phase != TurnPhase.idle)

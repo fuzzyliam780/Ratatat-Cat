@@ -172,6 +172,11 @@ public class Bartok : MonoBehaviour {
 
         // Report the turn passing
         Utils.tr("Bartok:PassTurn()", "Old: " + lastPlayerNum, "New: " + CURRENT_PLAYER.playerNum);
+
+        if (S == null)
+        {
+            S = this;
+        }
     }
 
     public bool CheckGameOver()
@@ -307,13 +312,30 @@ public class Bartok : MonoBehaviour {
 
             //DRAW FROM DISCARD PILE
 
-            //case CBState.discard:
-            //    // Draw the top card, not necessarily the one clicked.
-            //    CardBartok Dcb = CURRENT_PLAYER.AddCard(Draw());
-            //    Dcb.callbackPlayer = CURRENT_PLAYER;
-            //    Utils.tr("Bartok:CardClicked()", "Draw", Dcb.name);
-            //    phase = TurnPhase.waiting;
-            //    break;
+            case CBState.target:
+                if (Waiting_For_Hand_Slot_Selection)//Checks if the program is waiting for the hand slot to be chosen
+                {
+                    //CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
+                    //selectedCard.callbackPlayer = CURRENT_PLAYER;
+
+                    //CURRENT_PLAYER.RemoveCard(selectedCard);//Removes the card from the hand
+                    selectedCard.callbackPlayer = CURRENT_PLAYER;
+                    MoveToTarget(selectedCard);
+
+                    selectedCard = null;
+
+                    phase = TurnPhase.waiting;
+                    Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
+                }
+                else
+                {
+                        // Draw the top card, not necessarily the one clicked.
+                        //CardBartok Dcb = CURRENT_PLAYER.AddCard(Draw());
+                        //Dcb.callbackPlayer = CURRENT_PLAYER;
+                        //Utils.tr("Bartok:CardClicked()", "Draw", Dcb.name);
+                        //phase = TurnPhase.waiting;
+                }
+                break;
 
 
             case CBState.hand:
