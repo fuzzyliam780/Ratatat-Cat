@@ -327,15 +327,16 @@ public class Bartok : MonoBehaviour {
                     {
                         if (selectedCard.def.rank <= 2)
                         {
-
+                            PowerCard_DrawTwo();
                         }
                         else if (selectedCard.def.rank <= 5)
                         {
+                            PowerCard_Peek_bool = true;
 
                         }
                         else if (selectedCard.def.rank <= 8)
                         {
-
+                            PowerCard_Swap_bool = true;
                         }
                     }
                 }
@@ -377,7 +378,8 @@ public class Bartok : MonoBehaviour {
                     //selectedCard: the card that will be swapped in
 
                     SwapCard(tCB);
-                }//else if ()
+                }
+                //else if (CardBelongsToPlayer(tCB) && PowerCard_Swap_bool)
                 //{
 
                 //}
@@ -401,16 +403,43 @@ public class Bartok : MonoBehaviour {
 
     void PowerCard_DrawTwo()
     {
+        //remove selectedcard
 
+        //draw new card
+
+        //wait for click to discard or swap
+
+        //if player did not swap, draw a second card
+
+        //wait for click to discard or swap
     }
 
     void PowerCard_Peek()
     {
+        //removed selectedcard
 
+        //wait for player to click card to peek at
+        //--check if the card they clicked is in their hand
     }
 
     void PowerCard_Swap()
     {
+        //removed selectedcard
 
+        //wait for player to click card to swap with
+        //--check if the card they clicked is NOT in their hand
+    }
+
+    bool CardBelongsToPlayer(CardBartok tCB)
+    {
+        foreach (CardBartok CB in CURRENT_PLAYER.hand)
+        {
+            if (CB == selectedCard)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
