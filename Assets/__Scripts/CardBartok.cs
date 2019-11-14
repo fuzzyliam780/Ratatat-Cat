@@ -13,7 +13,8 @@ public enum CBState
     target,
     discard,
     to,
-    idle
+    idle,
+    selected
 }
 
 public class CardBartok : Card {

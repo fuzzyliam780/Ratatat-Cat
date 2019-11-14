@@ -16,6 +16,9 @@ public class Bartok : MonoBehaviour {
     static public Bartok S;
     static public Player CURRENT_PLAYER;
     static bool Waiting_For_Hand_Slot_Selection = false;
+    static bool PowerCard_DrawTwo_bool = false;
+    static bool PowerCard_Peek_bool = false;
+    static bool PowerCard_Swap_bool = false;
 
     [Header("Set in Inspector")]
     public TextAsset deckXML;
@@ -35,6 +38,7 @@ public class Bartok : MonoBehaviour {
 
     private BartokLayout layout;
     private Transform layoutAnchor;
+    public GameObject selected;
 
     private void Awake()
     {
@@ -246,6 +250,17 @@ public class Bartok : MonoBehaviour {
         return tCB;
     }
 
+    public CardBartok MoveToSelected(CardBartok tCB)
+    {
+        tCB.state = CBState.selected;
+        //selectedCard = tCB;
+        tCB.SetSortingLayerName(layout.discardPile.layerName);
+        tCB.SetSortOrder(discardPile.Count * 4);
+        tCB.transform.localPosition = selected.transform.position;
+        tCB.callbackPlayer = CURRENT_PLAYER;
+        return tCB;
+    }
+
     public CardBartok MoveToDiscard(CardBartok tCB)
     {
         tCB.state = CBState.discard;
@@ -260,7 +275,7 @@ public class Bartok : MonoBehaviour {
     // The Draw function will pull a single card from the drawPile and return it
     public CardBartok DrawFromDrawPile()
     {
-        CardBartok cd = drawPile[0]; // Pull the 0th CardBartok
+        CardBartok cd = MoveToSelected(drawPile[0]); // Pull the 0th CardBartok
 
         if(drawPile.Count == 0)
         {
@@ -304,8 +319,25 @@ public class Bartok : MonoBehaviour {
             case CBState.drawpile:
                 if (!Waiting_For_Hand_Slot_Selection)//Checks if the program is waiting for the hand slot to be chosen
                 {
+                    //selectedCard.callbackPlayer = CURRENT_PLAYER;
                     selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                     Waiting_For_Hand_Slot_Selection = true;  //we are now waiting for the hand slot to be selected
+
+                    if (selectedCard.suit == "P")
+                    {
+                        if (selectedCard.def.rank <= 2)
+                        {
+
+                        }
+                        else if (selectedCard.def.rank <= 5)
+                        {
+
+                        }
+                        else if (selectedCard.def.rank <= 8)
+                        {
+
+                        }
+                    }
                 }
                 break;
 
@@ -344,18 +376,41 @@ public class Bartok : MonoBehaviour {
                     //tCB: the card that will be swapped out / the slot of the card that will be removed and where the selected card will be added
                     //selectedCard: the card that will be swapped in
 
-                    CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-                    tCB.callbackPlayer = CURRENT_PLAYER;
-                    MoveToTarget(tCB);
+                    SwapCard(tCB);
+                }//else if ()
+                //{
 
-                    CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
-                    selectedCard.callbackPlayer = CURRENT_PLAYER;
-                    selectedCard = null;
-
-                    phase = TurnPhase.waiting;
-                    Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
-                }
+                //}
                 break;
         }
+    }
+
+    void SwapCard(CardBartok tCB)
+    {
+        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
+        tCB.callbackPlayer = CURRENT_PLAYER;
+        MoveToTarget(tCB);
+
+        CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
+        selectedCard.callbackPlayer = CURRENT_PLAYER;
+        selectedCard = null;
+
+        phase = TurnPhase.waiting;
+        Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
+    }
+
+    void PowerCard_DrawTwo()
+    {
+
+    }
+
+    void PowerCard_Peek()
+    {
+
+    }
+
+    void PowerCard_Swap()
+    {
+
     }
 }

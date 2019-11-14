@@ -218,15 +218,15 @@ public class Deck : MonoBehaviour {
                     }
                     else if (card.suit == "P")
                     {
-                        if (card.rank == 0 || card.rank == 1 || card.rank == 2)
+                        if (card.rank <= 2)
                         {
                             tS = rankSprites[10];
                         }
-                        else if (card.rank == 3 || card.rank == 4 || card.rank == 5)
+                        else if (card.rank <= 5)
                         {
                             tS = rankSprites[11];
                         }
-                        else if (card.rank == 6 || card.rank == 7 || card.rank == 8)
+                        else if (card.rank <= 8)
                         {
                             tS = rankSprites[12];
                         }
