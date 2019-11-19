@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/__Bartok_Scene_0.unity
     guid: 51522ca524a145c419dff906deae731e
+  - enabled: 1
+    path: Assets/StartScene.unity
+    guid: 497ce56c49ee0c8478d9a10ff8655df3
   m_configObjects: {}
