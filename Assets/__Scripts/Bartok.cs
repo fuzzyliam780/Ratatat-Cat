@@ -32,7 +32,6 @@ public class Bartok : MonoBehaviour {
     public Deck deck;
     public List<CardBartok> drawPile;
     public List<CardBartok> discardPile;
-    public List<CardBartok> hand;
     public List<Player> players;
     public CardBartok targetCard,selectedCard;
     public TurnPhase phase = TurnPhase.idle;
@@ -40,6 +39,7 @@ public class Bartok : MonoBehaviour {
     private BartokLayout layout;
     private Transform layoutAnchor;
     public GameObject selected;
+    int k;
 
     private void Awake()
     {
@@ -170,6 +170,10 @@ public class Bartok : MonoBehaviour {
                 return;
             }
         }
+        if (num == 0)
+        {
+            k += 1;
+        }
         CURRENT_PLAYER = players[num];
         phase = TurnPhase.pre;
 
@@ -272,40 +276,43 @@ public class Bartok : MonoBehaviour {
 
         return tCB;
     }
+    
+    public void RestackDrawPile()
+    {
+        // If the drawPile is now empty
+        // We need to shuffle the discards into the drawPile
+        int ndx;
+        while (discardPile.Count > 0)
+        {
+            // Pull a random card from the discard pile
+            ndx = Random.Range(0, discardPile.Count);
+            drawPile.Add(discardPile[ndx]);
+            discardPile.RemoveAt(ndx);
+        }
+        ArrangeDrawPile();
+        // Show the cards moving to the drawPile
+        float t = Time.time;
+        foreach (CardBartok tCB in drawPile)
+        {
+            tCB.transform.localPosition = layout.discardPile.pos;
+            tCB.callbackPlayer = null;
+            tCB.MoveTo(layout.drawPile.pos);
+            tCB.timeStart = t;
+            t += 0.02f;
+            tCB.state = CBState.toDrawpile;
+            tCB.eventualSortLayer = "0";
+        }
+    }
 
     // The Draw function will pull a single card from the drawPile and return it
     public CardBartok DrawFromDrawPile()
     {
         CardBartok cd = MoveToSelected(drawPile[0]); // Pull the 0th CardBartok
-
-        if(drawPile.Count == 0)
+        if (drawPile.Count == 0)
         {
-            // If the drawPile is now empty
-            // We need to shuffle the discards into the drawPile
-            int ndx;
-            while(discardPile.Count > 0)
-            {
-                // Pull a random card from the discard pile
-                ndx = Random.Range(0, discardPile.Count);
-                drawPile.Add(discardPile[ndx]);
-                discardPile.RemoveAt(ndx);
-            }
-            ArrangeDrawPile();
-            // Show the cards moving to the drawPile
-            float t = Time.time;
-            foreach (CardBartok tCB in drawPile)
-            {
-                tCB.transform.localPosition = layout.discardPile.pos;
-                tCB.callbackPlayer = null;
-                tCB.MoveTo(layout.drawPile.pos);
-                tCB.timeStart = t;
-                t += 0.02f;
-                tCB.state = CBState.toDrawpile;
-                tCB.eventualSortLayer = "0";
-            }
+            RestackDrawPile();
         }
-
-        drawPile.RemoveAt(0); // Then remove it from List<> drawPile
+            drawPile.RemoveAt(0); // Then remove it from List<> drawPile
         return (cd); // And return it
     }
 
@@ -404,18 +411,18 @@ public class Bartok : MonoBehaviour {
 
     public void SwapCard_AI(CardBartok tCB)
     {
-        CardBartok old_target = targetCard;
+        CardBartok old_target = DrawFromDrawPile();
 
         CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-        tCB.callbackPlayer = CURRENT_PLAYER;
+        //tCB.callbackPlayer = CURRENT_PLAYER;
         MoveToTarget(tCB);
 
         CURRENT_PLAYER.AddCard(old_target);//Adds the selected card to the hand
-        old_target.callbackPlayer = CURRENT_PLAYER;
+        //old_target.callbackPlayer = CURRENT_PLAYER;
         old_target = null;
 
         phase = TurnPhase.waiting;
-        Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
+        //the hand slot selected
     }
 
     void PowerCard_DrawTwo()
