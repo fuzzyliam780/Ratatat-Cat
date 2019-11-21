@@ -206,14 +206,14 @@ public class Player {
 
         // So, there is a card or more to play, so pick one
         cb = validCards[Random.Range(0, validCards.Count)];
-        RemoveCard(cb);
-        Bartok.S.MoveToTarget(cb);
+        //RemoveCard(cb);
+        Bartok.S.SwapCard_AI(cb);
         cb.callbackPlayer = this;
     }
 
     public void CBCallback(CardBartok tCB)
     {
-        Utils.tr("Player.CBCallback()", tCB.name, "Player " + playerNum);
+        //Utils.tr("Player.CBCallback()", tCB.name, "Player " + playerNum);
         // The card is done moving, so pass the turn
         Bartok.S.PassTurn();
     }

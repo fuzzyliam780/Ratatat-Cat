@@ -401,6 +401,22 @@ public class Bartok : MonoBehaviour {
         Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
     }
 
+    public void SwapCard_AI(CardBartok tCB)
+    {
+        CardBartok old_target = targetCard;
+
+        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
+        tCB.callbackPlayer = CURRENT_PLAYER;
+        MoveToTarget(tCB);
+
+        CURRENT_PLAYER.AddCard(old_target);//Adds the selected card to the hand
+        old_target.callbackPlayer = CURRENT_PLAYER;
+        old_target = null;
+
+        phase = TurnPhase.waiting;
+        Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
+    }
+
     void PowerCard_DrawTwo()
     {
         //remove selectedcard
