@@ -24,14 +24,16 @@ public class Bartok : MonoBehaviour {
     public TextAsset deckXML;
     public TextAsset layoutXML;
     public Vector3 layoutCenter = Vector3.zero;
-    public float handFanDegrees = 10f;
+    public float HandPos = 10f;
     public int numStartingCards = 4;
     public float drawTimeStagger = 0.1f;
+    public GameObject[] Position;
 
     [Header("Set Dynamically")]
     public Deck deck;
     public List<CardBartok> drawPile;
     public List<CardBartok> discardPile;
+    public List<CardBartok> hand;
     public List<Player> players;
     public CardBartok targetCard,selectedCard;
     public TurnPhase phase = TurnPhase.idle;
