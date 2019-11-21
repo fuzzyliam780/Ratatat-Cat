@@ -163,7 +163,7 @@ public class Player {
                 hand[i].state = CBState.hand; 
                 This ends the multiline comment => */
 
-                hand[i].faceUp = (type == PlayerType.human);
+                //hand[i].faceUp = (type == PlayerType.human);
 
                 // Set the SortOrder of the cards so that they overlap properly
                 hand[i].eventualSortOrder = i * 4;

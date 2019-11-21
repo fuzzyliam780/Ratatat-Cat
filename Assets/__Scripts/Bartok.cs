@@ -321,6 +321,7 @@ public class Bartok : MonoBehaviour {
                 {
                     //selectedCard.callbackPlayer = CURRENT_PLAYER;
                     selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+                    selectedCard.faceUp = true; //selects the card at the top of the draw pile
                     Waiting_For_Hand_Slot_Selection = true;  //we are now waiting for the hand slot to be selected
 
                     if (selectedCard.suit == "P")
@@ -395,6 +396,7 @@ public class Bartok : MonoBehaviour {
 
         CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
         selectedCard.callbackPlayer = CURRENT_PLAYER;
+        selectedCard.faceUp = false;
         selectedCard = null;
 
         phase = TurnPhase.waiting;
@@ -411,6 +413,7 @@ public class Bartok : MonoBehaviour {
 
         CURRENT_PLAYER.AddCard(old_target);//Adds the selected card to the hand
         old_target.callbackPlayer = CURRENT_PLAYER;
+        old_target.faceUp = false;
         old_target = null;
 
         phase = TurnPhase.waiting;
@@ -419,9 +422,12 @@ public class Bartok : MonoBehaviour {
 
     void PowerCard_DrawTwo()
     {
-        //remove selectedcard
+        MoveToTarget(selectedCard);
+        selectedCard.callbackPlayer = CURRENT_PLAYER;
+        selectedCard = null;
 
         //draw new card
+        selectedCard = DrawFromDrawPile();
 
         //wait for click to discard or swap
 
