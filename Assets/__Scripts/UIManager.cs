@@ -7,7 +7,20 @@ public class UIManager : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("_Bartok_Scene_0");
+        SceneManager.LoadScene("__Bartok_Scene_0");
+
     }
+
+    public void RulesScene()
+    {
+        SceneManager.LoadScene("RulesScene");
+    }
+
+    public void StartScreen()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
+
+    
 
 }
