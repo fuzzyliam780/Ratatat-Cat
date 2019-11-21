@@ -105,7 +105,7 @@ public class Player {
         {
             if (hand[i] != null)
             rot = startRot;
-            rotQ = Quaternion.Euler(0, 0, rot);
+            //rotQ = Quaternion.Euler(0, 0, rot);
 
             pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
 
@@ -117,7 +117,7 @@ public class Player {
             // If not the initial deal, start moving the card immediately.
             if (Bartok.S.phase != TurnPhase.idle)
             {
-                rot = startRot - Bartok.S.handFanDegrees * i;
+                rot = startRot;// - Bartok.S.handFanDegrees * i;
                 //rotQ = Quaternion.Euler(0, 0, rot);
                 
 
