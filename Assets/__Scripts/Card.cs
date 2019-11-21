@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Card : MonoBehaviour {
+public class Card : MonoBehaviour
+{
     [Header("Set Dynamically")]
     public string suit; // Suit of the Card (C,D,H, or S)
     public int rank; // Rank of the Card (1-14)
@@ -42,7 +43,7 @@ public class Card : MonoBehaviour {
     {
         PopulateSpriteRenderers();
 
-        foreach(SpriteRenderer tSR in spriteRenderers)
+        foreach (SpriteRenderer tSR in spriteRenderers)
         {
             tSR.sortingLayerName = tSLN;
         }
@@ -69,8 +70,13 @@ public class Card : MonoBehaviour {
             {
                 case "back": // If the name is "back"
                     // Set it to the highest layer to cover the other sprites
+                    tSR.sortingOrder = sOrd + 3;
+                    break;
+                case "letter":
                     tSR.sortingOrder = sOrd + 2;
                     break;
+
+
                 case "face": // If the name is "face"
                 default: // or if it's anything else
                     // Set it to the middle layer to be above the background
