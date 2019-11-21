@@ -11,20 +11,21 @@ public enum PlayerType
 }
 
 [System.Serializable]
-public class Player {
+public class Player
+{
     public PlayerType type = PlayerType.ai;
     public int playerNum;
     public SlotDef handSlotDef;
     public CardBartok[] hand; // The cards in this player's hand
 
-	// Add a card to the hand
+    // Add a card to the hand
     public CardBartok AddCard(CardBartok eCB)
     {
         if (hand == null) hand = new CardBartok[4];
 
         // Add the card to the hand
         bool CardAdded = false;
-        for (int i = 0;i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (hand[i] == null && !CardAdded)
             {
@@ -36,7 +37,7 @@ public class Player {
         //{
         //    hand[hand.Length] = eCB;
         //}
-        
+
 
         //Sort the cards by rank using LINQ if this is a human
         //if (type == PlayerType.human)
@@ -78,6 +79,10 @@ public class Player {
         // startRot is the rotation about Z of the first card
         float startRot = 0;
         startRot = handSlotDef.rot;
+        if (hand.Length > 1)
+        {
+            startRot += Bartok.S.handFanDegrees * (hand.Length - 1) / 2;
+        }
 
         // Move all the cards to their new positions
         Vector3 pos;
@@ -101,25 +106,13 @@ public class Player {
                 rotQ = Quaternion.Euler(0, 0, 0);
                 break;
         }
-        for (int i=0; i<hand.Length; i++)
+        for (int i = 0; i < hand.Length; i++)
         {
             if (hand[i] != null)
-            rot = startRot;
-            //rotQ = Quaternion.Euler(0, 0, rot);
-
-            pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
-
-            pos = rotQ * pos;
-
-            // Add the base position of the player's hand (which will be at the
-            // bottom-center of the fan of the cards)
-            pos += handSlotDef.pos;
-            // If not the initial deal, start moving the card immediately.
-            if (Bartok.S.phase != TurnPhase.idle)
             {
-                rot = startRot;// - Bartok.S.handFanDegrees * i;
+                rot = startRot - Bartok.S.handFanDegrees * i;
                 //rotQ = Quaternion.Euler(0, 0, rot);
-                
+
 
                 //pos = Vector3.up * CardBartok.CARD_HEIGHT / 2f;
 
@@ -204,7 +197,7 @@ public class Player {
             }
         }
         // If there are no valid cards
-        if(validCards.Count == 0)
+        if (validCards.Count == 0)
         {
             // ... then draw a card
             cb = AddCard(Bartok.S.DrawFromDrawPile());

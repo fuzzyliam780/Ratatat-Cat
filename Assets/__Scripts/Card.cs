@@ -72,7 +72,6 @@ public class Card : MonoBehaviour
                     // Set it to the highest layer to cover the other sprites
                     tSR.sortingOrder = sOrd + 2;
                     break;
-
                 case "face": // If the name is "face"
                 default: // or if it's anything else
                     // Set it to the middle layer to be above the background
