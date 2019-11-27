@@ -208,8 +208,9 @@ public class Player
         // So, there is a card or more to play, so pick one
         cb = validCards[Random.Range(0, validCards.Count)];
         //RemoveCard(cb);
+        //Bartok.S.MoveToTarget(cb);
         Bartok.S.SwapCard_AI(cb);
-        cb.callbackPlayer = this;
+        //cb.callbackPlayer = this;
     }
 
     public void CBCallback(CardBartok tCB)

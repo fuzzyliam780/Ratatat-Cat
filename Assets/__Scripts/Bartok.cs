@@ -239,7 +239,7 @@ public class Bartok : MonoBehaviour {
     public CardBartok MoveToTarget(CardBartok tCB)
     {
         tCB.timeStart = 0;
-        tCB.MoveTo(layout.discardPile.pos + Vector3.back);
+        tCB.MoveTo/*_2Cards*/(layout.discardPile.pos + Vector3.back/*,selectedCard,CURRENT_PLAYER*/);
         tCB.state = CBState.toTarget;
         tCB.faceUp = true;
 

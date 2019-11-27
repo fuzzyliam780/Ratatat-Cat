@@ -23,6 +23,8 @@ public class CardBartok : Card {
     static public string MOVE_EASING = Easing.InOut;
     static public float CARD_HEIGHT = 3.5f;
     static public float CARD_WIDTH = 2f;
+    CardBartok secondCard = null;
+    Player playerforcard2 = null;
 
     [Header("Set Dynamically: CardBartok")]
     public CBState state = CBState.drawpile;
@@ -63,6 +65,11 @@ public class CardBartok : Card {
     }
 
     public void MoveTo(Vector3 ePos)
+    {
+        MoveTo(ePos, Quaternion.identity);
+    }
+
+    public void MoveTo_2Cards(Vector3 ePos,CardBartok secondCard,Player playerFor2ndCard)
     {
         MoveTo(ePos, Quaternion.identity);
     }
@@ -109,8 +116,18 @@ public class CardBartok : Card {
                     {
                         // If there's a callback Player
                         // Call CBCallback directly on the Player
-                        callbackPlayer.CBCallback(this);
-                        callbackPlayer = null;
+                        if (secondCard == null)
+                        {
+                            callbackPlayer.CBCallback(this);
+                            callbackPlayer = null;
+                        }
+                        else
+                        {
+                            playerforcard2.CBCallback(secondCard);
+                            secondCard = null;
+                            playerforcard2 = null;
+                        }
+                        
                     }
                     else
                     {
