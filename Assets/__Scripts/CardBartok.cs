@@ -23,8 +23,8 @@ public class CardBartok : Card {
     static public string MOVE_EASING = Easing.InOut;
     static public float CARD_HEIGHT = 3.5f;
     static public float CARD_WIDTH = 2f;
-    CardBartok secondCard = null;
-    Player playerforcard2 = null;
+    //CardBartok secondCard = null;
+    //Player playerforcard2 = null;
 
     [Header("Set Dynamically: CardBartok")]
     public CBState state = CBState.drawpile;
@@ -114,19 +114,8 @@ public class CardBartok : Card {
                     }
                     else if(callbackPlayer != null)
                     {
-                        // If there's a callback Player
-                        // Call CBCallback directly on the Player
-                        if (secondCard == null)
-                        {
-                            callbackPlayer.CBCallback(this);
-                            callbackPlayer = null;
-                        }
-                        else
-                        {
-                            playerforcard2.CBCallback(secondCard);
-                            secondCard = null;
-                            playerforcard2 = null;
-                        }
+                        callbackPlayer.CBCallback(this);
+                        callbackPlayer = null;
                         
                     }
                     else

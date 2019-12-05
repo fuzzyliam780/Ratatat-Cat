@@ -164,7 +164,7 @@ public class Player
                 hand[i].state = CBState.hand; 
                 This ends the multiline comment => */
 
-                hand[i].faceUp = (type == PlayerType.human);
+                //hand[i].faceUp = (type == PlayerType.human);
 
                 // Set the SortOrder of the cards so that they overlap properly
                 hand[i].eventualSortOrder = i * 4;
@@ -172,6 +172,13 @@ public class Player
             }
 
         }
+    }
+
+    public void Flip()
+    {
+        hand[0].faceUp = !hand[0].faceUp;
+        hand[3].faceUp = !hand[3].faceUp;
+
     }
 
     // The TakeTurn() function enables the AI of the computer Players
