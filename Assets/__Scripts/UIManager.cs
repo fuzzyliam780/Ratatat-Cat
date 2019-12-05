@@ -19,6 +19,12 @@ public class UIManager : MonoBehaviour
     public void StartScreen()
     {
         SceneManager.LoadScene("StartScene");
+
+    }
+
+    public void RulesScene2()
+    {
+        SceneManager.LoadScene("RulesScene2");
     }
 
     
