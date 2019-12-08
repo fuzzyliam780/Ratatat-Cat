@@ -27,6 +27,11 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("RulesScene2");
     }
 
+    public void RulesScene3()
+    {
+        SceneManager.LoadScene("RulesScene3");
+    }
+
     
 
 }
