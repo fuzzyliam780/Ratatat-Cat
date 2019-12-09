@@ -301,7 +301,7 @@ public class Bartok : MonoBehaviour {
         tCB.SetSortingLayerName(layout.discardPile.layerName);
         tCB.SetSortOrder(discardPile.Count * 4);
         tCB.transform.localPosition = layout.discardPile.pos + Vector3.back / 2;
-
+        
         return tCB;
     }
 
@@ -361,11 +361,10 @@ public class Bartok : MonoBehaviour {
             PowerCard_Peek_card.faceUp = false;
             PowerCard_Peek_card = null;
             PowerCard_Peek_bool = false;
-            activePC.callbackPlayer = CURRENT_PLAYER;
             MoveToDiscard(activePC);
             activePC = null;
-
-            phase = TurnPhase.waiting;
+            PassTurn(1);
+            return;
         }
         if (!CardBelongsToPlayer(tCB)) return;
         if (CURRENT_PLAYER.type != PlayerType.human) return;
@@ -470,6 +469,7 @@ public class Bartok : MonoBehaviour {
                     {
                         tCB.faceUp = true;
                         PowerCard_Peek_card = tCB;
+                        Waiting_For_Hand_Slot_Selection = false;
                     }
                     else
                     {
@@ -545,16 +545,17 @@ public class Bartok : MonoBehaviour {
 
     public void AI_TakeTurn()
     {
-        int x = Random.Range(0, 1);
+        int x = Random.Range(0, 2);
         switch (x)
         {
-            case 0:
+            case 0://draw from drawpile
                 selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                 selectedCard.callbackPlayer = null;
                 break;
-            case 1:
-                selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+            case 1://draw from discard
+                selectedCard = MoveToSelected(targetCard);
                 selectedCard.callbackPlayer = null;
+                targetCard = null;
                 break;
         }
         if (/*selectedCard.suit == "P"*/false)
