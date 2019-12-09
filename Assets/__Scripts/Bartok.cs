@@ -16,12 +16,13 @@ public class Bartok : MonoBehaviour {
     static public Bartok S;
     static public Player CURRENT_PLAYER;
     static bool Waiting_For_Hand_Slot_Selection = false;
-    static bool PowerCard_DrawTwo_bool = false;
-    static bool PowerCard_DrawTwo_bool2 = false;
+    static bool PowerCard_DrawTwo_active = false;
+    static bool PowerCard_DrawTwo_card2 = false;
     static bool PowerCard_Peek_bool = false;
     static bool PowerCard_Swap_bool = false;
     static bool targetSelected = false;
     public bool timerComplete = false;
+    static bool gameStarted = false;
 
     [Header("Set in Inspector")]
     public TextAsset deckXML;
@@ -30,18 +31,20 @@ public class Bartok : MonoBehaviour {
     public float handFanDegrees = 10f;
     public int numStartingCards = 4;
     public float drawTimeStagger = 0.1f;
+    public int TURN_COUNTER = 0;
 
     [Header("Set Dynamically")]
     public Deck deck;
     public List<CardBartok> drawPile;
     public List<CardBartok> discardPile;
     public List<Player> players;
-    public CardBartok targetCard,selectedCard;
+    public CardBartok targetCard,selectedCard,activePC;
     public TurnPhase phase = TurnPhase.idle;
 
     private BartokLayout layout;
     private Transform layoutAnchor;
     public GameObject selected;
+    public GameObject active_powercard;
 
     private void Awake()
     {
@@ -138,9 +141,20 @@ public class Bartok : MonoBehaviour {
 
                 players[(j + 1) % 4].AddCard(tCB);
             }
+
         }
 
-        Invoke("DrawFirstTarget", drawTimeStagger * (numStartingCards * 4 + 4));
+        players[0].hand[0].faceUp = true;
+        players[0].hand[3].faceUp = true;
+
+    }
+
+    public void startgame()
+    {
+        players[0].hand[0].faceUp = false;
+        players[0].hand[3].faceUp = false;
+        gameStarted = true;
+        Invoke("DrawFirstTarget", 1 /*drawTimeStagger * (numStartingCards * 4 + 4)*/);
     }
 
     public void DrawFirstTarget()
@@ -196,6 +210,10 @@ public class Bartok : MonoBehaviour {
         {
             S = this;
         }
+
+        TURN_COUNTER++;
+
+
     }
 
     public bool CheckGameOver()
@@ -249,7 +267,7 @@ public class Bartok : MonoBehaviour {
     public CardBartok MoveToTarget(CardBartok tCB)
     {
         tCB.timeStart = 0;
-        tCB.MoveTo/*_2Cards*/(layout.discardPile.pos + Vector3.back/*,selectedCard,CURRENT_PLAYER*/);
+        tCB.MoveTo(layout.discardPile.pos + Vector3.back);
         tCB.state = CBState.toTarget;
         tCB.faceUp = true;
 
@@ -270,7 +288,6 @@ public class Bartok : MonoBehaviour {
         tCB.state = CBState.selected;
         //selectedCard = tCB;
         tCB.SetSortingLayerName(layout.discardPile.layerName);
-        tCB.SetSortOrder(discardPile.Count * 4);
         tCB.transform.localPosition = selected.transform.position;
         tCB.callbackPlayer = null;
         return tCB;
@@ -285,6 +302,15 @@ public class Bartok : MonoBehaviour {
         tCB.transform.localPosition = layout.discardPile.pos + Vector3.back / 2;
 
         return tCB;
+    }
+
+    public void setActivePowerCard(CardBartok tCB)
+    {
+        activePC = tCB;
+        activePC.state = CBState.activePC;
+        activePC.SetSortingLayerName(layout.discardPile.layerName);
+        activePC.transform.localPosition = active_powercard.transform.position;
+        activePC.callbackPlayer = null;
     }
     
     public void RestackDrawPile()
@@ -322,12 +348,14 @@ public class Bartok : MonoBehaviour {
         {
             RestackDrawPile();
         }
-            drawPile.RemoveAt(0); // Then remove it from List<> drawPile
+        drawPile.RemoveAt(0); // Then remove it from List<> drawPile
         return (cd); // And return it
     }
 
     public void CardClicked(CardBartok tCB)
     {
+        if (!gameStarted) startgame();
+        if (!CardBelongsToPlayer(tCB)) return;
         if (CURRENT_PLAYER.type != PlayerType.human) return;
         if (phase == TurnPhase.waiting) return;
 
@@ -335,16 +363,16 @@ public class Bartok : MonoBehaviour {
         {
             //DRAW FROM DRAW PILE
             case CBState.drawpile:
-                if (!Waiting_For_Hand_Slot_Selection && !PowerCard_DrawTwo_bool)//Checks if the program is waiting for the hand slot to be chosen
+                if (!Waiting_For_Hand_Slot_Selection && !PowerCard_DrawTwo_active)//Checks if the program is waiting for the hand slot to be chosen
                 {
                     //selectedCard.callbackPlayer = CURRENT_PLAYER;
                     selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                     selectedCard.faceUp = true;
+                    selectedCard.callbackPlayer = null;
                     Waiting_For_Hand_Slot_Selection = true;  //we are now waiting for the hand slot to be selected
 
                     if (selectedCard.suit == "P")
                     {//Todo: fix power card draw two
-                        Utils.tr("*****DRAW TWO");
                         if (selectedCard.def.rank <= 2)
                         {
                             PowerCard_DrawTwo();
@@ -374,7 +402,7 @@ public class Bartok : MonoBehaviour {
                     //selectedCard.callbackPlayer = CURRENT_PLAYER;
 
                     //CURRENT_PLAYER.RemoveCard(selectedCard);//Removes the card from the hand
-                    if (PowerCard_DrawTwo_bool)
+                    if (PowerCard_DrawTwo_active)
                     {
                         selectedCard.callbackPlayer = null;
                     }
@@ -389,16 +417,18 @@ public class Bartok : MonoBehaviour {
 
                     Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
 
-                    if (PowerCard_DrawTwo_bool && !PowerCard_DrawTwo_bool2)
+                    if (PowerCard_DrawTwo_active && !PowerCard_DrawTwo_card2)
                     {
-                        PowerCard_DrawTwo_bool2 = true;
+                        PowerCard_DrawTwo_card2 = true;
 
                         PowerCard_DrawTwo();
                     } 
-                    else if (PowerCard_DrawTwo_bool && PowerCard_DrawTwo_bool2)
+                    else if (PowerCard_DrawTwo_active && PowerCard_DrawTwo_card2)
                     {
-                        PowerCard_DrawTwo_bool = false;
-                        PowerCard_DrawTwo_bool2 = false;
+                        PowerCard_DrawTwo_active = false;
+                        PowerCard_DrawTwo_card2 = false;
+                        MoveToDiscard(activePC);
+                        activePC = null;
 
                     }
                     else
@@ -427,9 +457,11 @@ public class Bartok : MonoBehaviour {
 
                     SwapCard(tCB);
 
-                    if (PowerCard_DrawTwo_bool)
+                    if (PowerCard_DrawTwo_active)
                     {
-                        PowerCard_DrawTwo_bool = false;
+                        PowerCard_DrawTwo_active = false;
+                        MoveToDiscard(activePC);
+                        activePC = null;
                     }
                 }
                 //else if (CardBelongsToPlayer(tCB) && PowerCard_Swap_bool)
@@ -470,41 +502,83 @@ public class Bartok : MonoBehaviour {
             Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
 
 
-            string i = "1";
+            //string i = "1";
             
         }
     }
 
-    public void SwapCard_AI(CardBartok tCB)
+
+    //public void SwapCard_AI(CardBartok tCB)
+    //{
+
+    //    CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
+    //    tCB.callbackPlayer = null;
+    //    MoveToTarget(tCB);
+
+    //    CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
+    //    selectedCard.callbackPlayer = CURRENT_PLAYER;
+    //    selectedCard = null;
+
+    //    phase = TurnPhase.waiting;
+    //}
+
+    public void AI_TakeTurn()
     {
-        CardBartok old_target = DrawFromDrawPile();
+        int x = Random.Range(0, 1);
+        switch (x)
+        {
+            case 0:
+                selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+                selectedCard.callbackPlayer = null;
+                break;
+            case 1:
+                selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+                selectedCard.callbackPlayer = null;
+                break;
+        }
+        if (selectedCard.suit == "P")
+        {
+            if (selectedCard.def.rank <= 2)
+            {
+                setActivePowerCard(selectedCard);
+                selectedCard = null;
 
-        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-        tCB.callbackPlayer = null;
-        MoveToTarget(tCB);
+                selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+                selectedCard.callbackPlayer = null;
+            }
+            else if (selectedCard.def.rank <= 5)
+            {
+                //setActivePowerCard(selectedCard);
+                //selectedCard = null;
 
-        CURRENT_PLAYER.AddCard(old_target);//Adds the selected card to the hand
-        old_target.callbackPlayer = CURRENT_PLAYER;
-        old_target = null;
-
-        phase = TurnPhase.waiting;
-        //the hand slot selected
+            }
+            else if (selectedCard.def.rank <= 8)
+            {
+                //setActivePowerCard(selectedCard);
+                //selectedCard = null;
+            }
+        }
+        else
+        {
+            SwapCard(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
+        }
     }
 
     void PowerCard_DrawTwo()
     {
-        if (!PowerCard_DrawTwo_bool)
+        if (!PowerCard_DrawTwo_active)
         {
             //remove selectedcard
-            MoveToTarget(selectedCard);
+            setActivePowerCard(selectedCard);
+            selectedCard = null;
 
             //draw new card
             selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
             selectedCard.faceUp = true;
 
             Waiting_For_Hand_Slot_Selection = true;
-            PowerCard_DrawTwo_bool = true;
-        }else if (PowerCard_DrawTwo_bool)
+            PowerCard_DrawTwo_active = true;
+        }else if (PowerCard_DrawTwo_active)
         {
             //if player did not swap, draw a second card
             selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
@@ -532,13 +606,17 @@ public class Bartok : MonoBehaviour {
 
     bool CardBelongsToPlayer(CardBartok tCB)
     {
-        foreach (CardBartok CB in CURRENT_PLAYER.hand)
+        if (CURRENT_PLAYER == null) return false;
+
+        foreach (CardBartok CB in players[0].hand)
         {
-            if (CB == selectedCard)
+            if (CB == tCB)
             {
                 return true;
             }
         }
+
+        if (tCB.state == CBState.drawpile || tCB.state == CBState.target) return true;
 
         return false;
     }

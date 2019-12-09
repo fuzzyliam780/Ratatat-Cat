@@ -14,7 +14,8 @@ public enum CBState
     discard,
     to,
     idle,
-    selected
+    selected,
+    activePC
 }
 
 public class CardBartok : Card {

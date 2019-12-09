@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.574817, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -614,20 +614,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35266b5ee33c892438252eaae5d0dd77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerComplete: 0
   deckXML: {fileID: 4900000, guid: c76312a0fb08948699e1abf935e4a957, type: 3}
   layoutXML: {fileID: 4900000, guid: 3cbb415767f464545ace171a299e0970, type: 3}
   layoutCenter: {x: 0, y: 0, z: 0}
   handFanDegrees: 10
   numStartingCards: 4
   drawTimeStagger: 0.1
+  TURN_COUNTER: 0
   deck: {fileID: 0}
   drawPile: []
   discardPile: []
   players: []
   targetCard: {fileID: 0}
   selectedCard: {fileID: 0}
+  activePC: {fileID: 0}
   phase: 0
   selected: {fileID: 1646437183}
+  active_powercard: {fileID: 2000948608}
 --- !u!114 &1382180771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -874,6 +878,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a78479e0894ae941a55036b1fcbad2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2000948608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2000948609}
+  m_Layer: 0
+  m_Name: Active_PowerCard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2000948609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000948608}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2137570472
 GameObject:
   m_ObjectHideFlags: 0

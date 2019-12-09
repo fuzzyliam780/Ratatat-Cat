@@ -203,21 +203,12 @@ public class Player
                 validCards.Add(tCB);
             }
         }
-        // If there are no valid cards
-        //if (validCards.Count == 0)
-        //{
-        //    // ... then draw a card
-        //    cb = AddCard(Bartok.S.DrawFromDrawPile());
-        //    cb.callbackPlayer = this;
-        //    return;
-        //}
 
         // So, there is a card or more to play, so pick one
         cb = validCards[Random.Range(0, validCards.Count)];
-        //RemoveCard(cb);
-        //Bartok.S.MoveToTarget(cb);
-        Bartok.S.SwapCard_AI(cb);
-        //cb.callbackPlayer = this;
+
+        Bartok.S.AI_TakeTurn();
+
     }
 
     public void CBCallback(CardBartok tCB)
