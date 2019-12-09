@@ -195,10 +195,14 @@ public class Bartok : MonoBehaviour {
         {
             lastPlayerNum = CURRENT_PLAYER.playerNum;
             // Check for Game Over and need to reshuffle discards
-            if (CheckGameOver())
+            if (TURN_COUNTER == 32)
             {
-                return;
+                if (CheckGameOver())
+                {
+                    return;
+                }
             }
+            
         }
         CURRENT_PLAYER = players[num];
         phase = TurnPhase.pre;
@@ -221,29 +225,230 @@ public class Bartok : MonoBehaviour {
 
     public bool CheckGameOver()
     {
-        // See if we need to reshuffle the discard pile into the draw pile
-        if(drawPile.Count == 0)
+        //// See if we need to reshuffle the discard pile into the draw pile
+        //if(drawPile.Count == 0)
+        //{
+        //    List<Card> cards = new List<Card>();
+        //    foreach (CardBartok cb in discardPile)
+        //    {
+        //        cards.Add(cb);
+        //    }
+        //    discardPile.Clear();
+        //    Deck.Shuffle(ref cards);
+        //    drawPile = UpgradeCardsList(cards);
+        //    ArrangeDrawPile();
+        //}
+
+        //// Check to see if the current player has won
+        //if(CURRENT_PLAYER.hand.Length == 0)
+        //{
+        //    // The player that just played has won!
+        //    phase = TurnPhase.gameOver;
+        //    Invoke("RestartGame", 1);
+        //    return (true);
+        //}
+        //return (false);
+
+        int p1_score = 0;
+        int p2_score = 0;
+        int p3_score = 0;
+        int p4_score = 0;
+
+        for(int p = 0;p < players.Count; p++)
         {
-            List<Card> cards = new List<Card>();
-            foreach (CardBartok cb in discardPile)
+            for (int c = 0; c < players[p].hand.Length; c++)
             {
-                cards.Add(cb);
+                if (players[p].hand[c].suit == "P")
+                {
+                    CardBartok tCB;
+                    do
+                    {
+                        tCB = DrawFromDrawPile();
+                    }
+                    while (tCB.suit == "P");
+
+                    players[p].hand[c] = tCB;
+                }
+
+                switch (p)
+                {
+                    case 0:
+                        p1_score += DetermineCardScore(players[p].hand[c]);
+                        break;
+                    case 1:
+                        p2_score += DetermineCardScore(players[p].hand[c]);
+                        break;
+                    case 2:
+                        p3_score += DetermineCardScore(players[p].hand[c]);
+                        break;
+                    case 3:
+                        p4_score += DetermineCardScore(players[p].hand[c]);
+                        break;
+                }
             }
-            discardPile.Clear();
-            Deck.Shuffle(ref cards);
-            drawPile = UpgradeCardsList(cards);
-            ArrangeDrawPile();
         }
-        
-        // Check to see if the current player has won
-        if(CURRENT_PLAYER.hand.Length == 0)
+
+        if (p1_score < p2_score && p1_score < p3_score && p1_score < p4_score)
         {
-            // The player that just played has won!
             phase = TurnPhase.gameOver;
+            Utils.tr("Player 1 has won");
             Invoke("RestartGame", 1);
-            return (true);
+            return true;
         }
-        return (false);
+        else if(p2_score < p1_score && p2_score < p3_score && p2_score < p4_score)
+        {
+            phase = TurnPhase.gameOver;
+            Utils.tr("Player 2 has won");
+            Invoke("RestartGame", 1);
+            return true;
+        }
+        else if (p3_score < p1_score && p3_score < p2_score && p3_score < p4_score)
+        {
+            phase = TurnPhase.gameOver;
+            Utils.tr("Player 3 has won");
+            Invoke("RestartGame", 1);
+            return true;
+        }
+        else if (p4_score < p1_score && p4_score < p2_score && p4_score < p3_score)
+        {
+            phase = TurnPhase.gameOver;
+            Utils.tr("Player 4 has won");
+            Invoke("RestartGame", 1);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    int DetermineCardScore(CardBartok cb)
+    {
+        int score = 0;
+
+        switch (cb.suit)
+        {
+            case "N":
+                switch (cb.rank)
+                {
+                    case 0:
+                        score = 0;
+                        break;
+                    case 1:
+                        score = 1;
+                        break;
+                    case 2:
+                        score = 2;
+                        break;
+                    case 3:
+                        score = 3;
+                        break;
+                    case 4:
+                        score = 4;
+                        break;
+                    case 5:
+                        score = 5;
+                        break;
+                    case 6:
+                        score = 6;
+                        break;
+                    case 7:
+                        score = 7;
+                        break;
+                    case 8:
+                        score = 8;
+                        break;
+
+                    case 9:
+                        score = 0;
+                        break;
+                    case 10:
+                        score = 1;
+                        break;
+                    case 11:
+                        score = 2;
+                        break;
+                    case 12:
+                        score = 3;
+                        break;
+                    case 13:
+                        score = 4;
+                        break;
+                    case 14:
+                        score = 5;
+                        break;
+                    case 15:
+                        score = 6;
+                        break;
+                    case 16:
+                        score = 7;
+                        break;
+                    case 17:
+                        score = 8;
+                        break;
+
+                    case 18:
+                        score = 0;
+                        break;
+                    case 19:
+                        score = 1;
+                        break;
+                    case 20:
+                        score = 2;
+                        break;
+                    case 21:
+                        score = 3;
+                        break;
+                    case 22:
+                        score = 4;
+                        break;
+                    case 23:
+                        score = 5;
+                        break;
+                    case 24:
+                        score = 6;
+                        break;
+                    case 25:
+                        score = 7;
+                        break;
+                    case 26:
+                        score = 8;
+                        break;
+
+                    case 27:
+                        score = 0;
+                        break;
+                    case 28:
+                        score = 1;
+                        break;
+                    case 29:
+                        score = 2;
+                        break;
+                    case 30:
+                        score = 3;
+                        break;
+                    case 31:
+                        score = 4;
+                        break;
+                    case 32:
+                        score = 5;
+                        break;
+                    case 33:
+                        score = 6;
+                        break;
+                    case 34:
+                        score = 7;
+                        break;
+                    case 35:
+                        score = 8;
+                        break;
+                }
+                break;
+            case "C":
+                score = 9;
+                break;
+        }
+
+        return score;
     }
 
     public void RestartGame()
