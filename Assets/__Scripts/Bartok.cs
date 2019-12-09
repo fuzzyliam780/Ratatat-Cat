@@ -535,44 +535,44 @@ public class Bartok : MonoBehaviour {
     public void AI_TakeTurn()
     {
         int x = Random.Range(0, 2);
-        switch (x)
-        {
-            case 0://draw from drawpile
+        //switch (x)
+        //{
+        //    case 0://draw from drawpile
                 selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                 selectedCard.callbackPlayer = null;
-                break;
-            case 1://draw from discard
-                selectedCard = MoveToSelected(targetCard);
-                selectedCard.callbackPlayer = null;
-                targetCard = null;
-                break;
-        }
-        if (/*selectedCard.suit == "P"*/false)
-        {
-            if (selectedCard.def.rank <= 2)
-            {
-                setActivePowerCard(selectedCard);
-                selectedCard = null;
+            //    break;
+            //case 1://draw from discard
+            //    selectedCard = MoveToSelected(targetCard);
+            //    selectedCard.callbackPlayer = null;
+            //    targetCard = null;
+            //    break;
+        //}
+        //if (/*selectedCard.suit == "P"*/false)
+        //{
+        //    if (selectedCard.def.rank <= 2)
+        //    {
+        //        setActivePowerCard(selectedCard);
+        //        selectedCard = null;
 
-                selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
-                selectedCard.callbackPlayer = null;
-            }
-            else if (selectedCard.def.rank <= 5)
-            {
-                //setActivePowerCard(selectedCard);
-                //selectedCard = null;
+        //        selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
+        //        selectedCard.callbackPlayer = null;
+        //    }
+        //    else if (selectedCard.def.rank <= 5)
+        //    {
+        //        //setActivePowerCard(selectedCard);
+        //        //selectedCard = null;
 
-            }
-            else if (selectedCard.def.rank <= 8)
-            {
-                //setActivePowerCard(selectedCard);
-                //selectedCard = null;
-            }
-        }
-        else
-        {
+        //    }
+        //    else if (selectedCard.def.rank <= 8)
+        //    {
+        //        //setActivePowerCard(selectedCard);
+        //        //selectedCard = null;
+        //    }
+        //}
+        //else
+        //{
             SwapCard(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
-        }
+        //}
     }
 
     void PowerCard_DrawTwo()
