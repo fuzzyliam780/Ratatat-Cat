@@ -298,15 +298,12 @@ public class Bartok : MonoBehaviour {
 
     public CardBartok MoveToDiscard(CardBartok tCB)
     {
-        Utils.tr("AI: MtD: start");
         tCB.state = CBState.discard;
         discardPile.Add(tCB);
-        Utils.tr("AI: MtD: added to discard");
         tCB.SetSortingLayerName(layout.discardPile.layerName);
         tCB.SetSortOrder(discardPile.Count * 4);
         tCB.transform.localPosition = layout.discardPile.pos + Vector3.back / 2;
-        Utils.tr("AI: MtD: end");
-
+        
         return tCB;
     }
 
@@ -522,62 +519,42 @@ public class Bartok : MonoBehaviour {
 
     void SwapCard(CardBartok tCB)
     {
-        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-        tCB.callbackPlayer = null;
-        MoveToTarget(tCB);
-            
-        selectedCard.faceUp = false;
-        CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
-        selectedCard.callbackPlayer = CURRENT_PLAYER;
-        selectedCard = null;
+            CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
+            tCB.callbackPlayer = null;
+            MoveToTarget(tCB);
 
-            
+            selectedCard.faceUp = false;
+            CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
+            selectedCard.callbackPlayer = CURRENT_PLAYER;
+            selectedCard = null;
 
-        phase = TurnPhase.waiting;
-        Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
-    }
-
-    void SwapCard_NC(CardBartok tCB)//no callbacks
-    {
-        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-        tCB.callbackPlayer = null;
-        MoveToTarget(tCB);
-
-        selectedCard.faceUp = false;
-        CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
-        selectedCard.callbackPlayer = null;
-        selectedCard = null;
-
-        if(CURRENT_PLAYER.type == PlayerType.human)
-        {
             phase = TurnPhase.waiting;
             Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
-        }
     }
 
     public void AI_TakeTurn()
     {
-        //bool drawn_from_discard = false;
+        bool drawn_from_discard = false;
         int x = Random.Range(0, 2);
-        //switch (x)
-        //{
-        //    case 0://draw from drawpile
+        switch (x)
+        {
+            case 0://draw from drawpile
                 Utils.tr("AI Draws from Drawpile");
                 selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                 selectedCard.callbackPlayer = null;
-            //    break;
-            //case 1://draw from discard
-            //    Utils.tr("AI Draws from Discard");
-            //    selectedCard = MoveToSelected(targetCard);
-            //    selectedCard.callbackPlayer = null;
-            //    targetCard = null;
-            //    drawn_from_discard = true;
-            //    break;
-        //}
-        if (selectedCard.suit == "P"/* && !drawn_from_discard*/)
+                break;
+            case 1://draw from discard
+                Utils.tr("AI Draws from Discard");
+                selectedCard = MoveToSelected(targetCard);
+                selectedCard.callbackPlayer = null;
+                targetCard = null;
+                drawn_from_discard = true;
+                break;
+        }
+        if (selectedCard.suit == "P")
         {
             Utils.tr("AI Draws a Powercard");
-            if (selectedCard.def.rank <= 2)//draw2
+            if (selectedCard.def.rank <= 2)
             {
                 Utils.tr("AI: Start Drawtwo");
                 bool card2 = false;
@@ -591,20 +568,16 @@ public class Bartok : MonoBehaviour {
                 switch (x)
                 {
                     case 0://drawn card to hand
-                        int y = Random.Range(0, 3);
-                        SwapCard_NC(CURRENT_PLAYER.hand[y]);
-                        Utils.tr("AI: card to hand");
+                        SwapCard(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
                         break;
                     case 1://drawn card to target
                         MoveToTarget(selectedCard);
                         selectedCard = null;
-                        card2 = true;
-                        Utils.tr("AI: card to target");
+                        card2 = true; 
                         break;
                 }
                 if (card2)
                 {
-                    Utils.tr("AI: Draw2: card2");
                     selectedCard = DrawFromDrawPile(); //selects the card at the top of the draw pile
                     selectedCard.callbackPlayer = null;
 
@@ -612,26 +585,14 @@ public class Bartok : MonoBehaviour {
                     switch (x)
                     {
                         case 0://drawn card to hand
-                            SwapCard_NC(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
-                            Utils.tr("AI: Draw2: card2 to hand");
+                            SwapCard(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
                             break;
                         case 1://drawn card to target
                             MoveToTarget(selectedCard);
                             selectedCard = null;
-                            Utils.tr("AI: Draw2: card2 to target");
                             break;
                     }
 
-                    activePC.callbackPlayer = CURRENT_PLAYER;
-                    MoveToDiscard(activePC);
-                    activePC = null;
-                    card2 = false;
-                }
-                else
-                {
-                    Utils.tr("AI: Draw2: no card2");
-
-                    activePC.callbackPlayer = CURRENT_PLAYER;
                     MoveToDiscard(activePC);
                     activePC = null;
                     card2 = false;
@@ -639,13 +600,12 @@ public class Bartok : MonoBehaviour {
                 
 
             }
-            else if (selectedCard.def.rank <= 5)//Peek
+            else if (selectedCard.def.rank <= 5)
             {
                 Utils.tr("AI: Start Peek");
                 setActivePowerCard(selectedCard);
                 selectedCard = null;
 
-                activePC.callbackPlayer = CURRENT_PLAYER;
                 MoveToDiscard(activePC);
                 activePC = null;
                 int i = 0;
@@ -657,18 +617,9 @@ public class Bartok : MonoBehaviour {
                     }
                 }
 
-                if(i+1 == 4)
-                {
-                    i = 0;
-                }
-                else
-                {
-                    i += 1;
-                }
-
                 PassTurn(i);
             }
-            else if (selectedCard.def.rank <= 8)//Swap
+            else if (selectedCard.def.rank <= 8)
             {
                 Utils.tr("AI: Start Swap");
                 setActivePowerCard(selectedCard);
@@ -682,7 +633,7 @@ public class Bartok : MonoBehaviour {
                 {
                     you_index = Random.Range(0, 4);
                 }
-                while (CURRENT_PLAYER.playerNum != you_index);
+                while (CURRENT_PLAYER != players[you_index]);
 
                 yourcard_index = Random.Range(0, 4);
                 mycard_index = Random.Range(0, 4);
@@ -692,35 +643,34 @@ public class Bartok : MonoBehaviour {
                 PowerCard_Swap_yourcard = players[you_index].hand[yourcard_index];
 
                 players[you_index].hand[yourcard_index] = null;
-                PowerCard_Swap_mycard.callbackPlayer = null;
                 players[you_index].AddCard(PowerCard_Swap_mycard);
+                PowerCard_Swap_mycard.callbackPlayer = null;
                 PowerCard_Swap_mycard = null;
 
                 CURRENT_PLAYER.hand[mycard_index] = null;
-                PowerCard_Swap_yourcard.callbackPlayer = CURRENT_PLAYER;
                 CURRENT_PLAYER.AddCard(PowerCard_Swap_yourcard);
+                PowerCard_Swap_yourcard.callbackPlayer = CURRENT_PLAYER;
                 PowerCard_Swap_yourcard = null;
 
-                activePC.callbackPlayer = null;
                 MoveToDiscard(activePC);
                 activePC = null;
+
             }
         }
         else
         {
             x = Random.Range(0, 2);
-            //if (drawn_from_discard) x = 0;
+            if (drawn_from_discard) x = 0;
             switch (x)
             {
                 case 0://drawn card to hand
                     Utils.tr("AI: Drawn card swaps with hand");
-                    CardBartok tCB = CURRENT_PLAYER.hand[Random.Range(0, 3)];
-                    SwapCard(tCB);
+                    SwapCard(CURRENT_PLAYER.hand[Random.Range(0, 3)]);
                     break;
                 case 1://drawn card to target
                     Utils.tr("AI: Drawn card to target");
-                    selectedCard.callbackPlayer = CURRENT_PLAYER;
                     MoveToTarget(selectedCard);
+                    selectedCard.callbackPlayer = CURRENT_PLAYER;
                     selectedCard = null;
                     break;
             }

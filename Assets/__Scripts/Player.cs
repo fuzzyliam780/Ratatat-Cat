@@ -191,21 +191,21 @@ public class Player
 
         Bartok.S.phase = TurnPhase.waiting;
 
-        //CardBartok cb;
+        CardBartok cb;
 
         // If this is an AI player, need to make a choice about what to play
         // Find valid plays
-        //List<CardBartok> validCards = new List<CardBartok>();
-        //foreach (CardBartok tCB in hand)
-        //{
-        //    if (Bartok.S.ValidPlay(tCB))
-        //    {
-        //        validCards.Add(tCB);
-        //    }
-        //}
+        List<CardBartok> validCards = new List<CardBartok>();
+        foreach (CardBartok tCB in hand)
+        {
+            if (Bartok.S.ValidPlay(tCB))
+            {
+                validCards.Add(tCB);
+            }
+        }
 
         // So, there is a card or more to play, so pick one
-        //cb = validCards[Random.Range(0, validCards.Count)];
+        cb = validCards[Random.Range(0, validCards.Count)];
 
         Bartok.S.AI_TakeTurn();
 
