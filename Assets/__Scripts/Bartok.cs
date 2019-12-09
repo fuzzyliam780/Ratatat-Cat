@@ -20,6 +20,8 @@ public class Bartok : MonoBehaviour {
     static bool PowerCard_DrawTwo_card2 = false;
     static bool PowerCard_Peek_bool = false;
     static bool PowerCard_Swap_bool = false;
+    static bool PowerCard_Swap_myHand = false;
+    static bool PowerCard_Swap_yourHand = false;
     static bool targetSelected = false;
     public bool timerComplete = false;
     static bool gameStarted = false;
@@ -39,7 +41,7 @@ public class Bartok : MonoBehaviour {
     public List<CardBartok> discardPile;
     public List<Player> players;
     public CardBartok targetCard,selectedCard,activePC;
-    static CardBartok PowerCard_Peek_card;
+    static CardBartok PowerCard_Peek_card, PowerCard_Swap_mycard, PowerCard_Swap_yourcard;
     public TurnPhase phase = TurnPhase.idle;
 
     private BartokLayout layout;
@@ -366,7 +368,7 @@ public class Bartok : MonoBehaviour {
             PassTurn(1);
             return;
         }
-        if (!CardBelongsToPlayer(tCB)) return;
+        if (!CardBelongsToPlayer(tCB) && !PowerCard_Swap_yourHand) return;
         if (CURRENT_PLAYER.type != PlayerType.human) return;
         if (phase == TurnPhase.waiting) return;
 
@@ -391,13 +393,19 @@ public class Bartok : MonoBehaviour {
                         else if (selectedCard.def.rank <= 5)
                         {
                             PowerCard_Peek_bool = true;
+
                             setActivePowerCard(selectedCard);
                             selectedCard = null;
 
                         }
                         else if (selectedCard.def.rank <= 8)
                         {
-                            //PowerCard_Swap_bool = true;
+                            PowerCard_Swap_bool = true;
+                            Waiting_For_Hand_Slot_Selection = true;
+                            PowerCard_Swap_myHand = true;
+
+                            setActivePowerCard(selectedCard);
+                            selectedCard = null;
                             //PowerCard_DrawTwo();
                         }
                     }
@@ -474,7 +482,23 @@ public class Bartok : MonoBehaviour {
                     else
                     {
                         if (targetSelected) targetSelected = false;
-                        SwapCard(tCB);
+                        if (!(PowerCard_Swap_myHand || PowerCard_Swap_yourHand))
+                        {
+                            SwapCard(tCB);
+                        }
+                    }
+
+                    if (PowerCard_Swap_myHand && CardBelongsToPlayer(tCB))
+                    {
+                        PowerCard_Swap_mycard = tCB;
+                        PowerCard_Swap_myHand = false;
+                        PowerCard_Swap_yourHand = true;
+                    }else if (PowerCard_Swap_yourHand && !CardBelongsToPlayer(tCB))
+                    {
+                        PowerCard_Swap_yourcard = tCB;
+                        PowerCard_Swap_yourHand = false;
+                        PowerCard_Swap();
+
                     }
                     
 
@@ -495,21 +519,6 @@ public class Bartok : MonoBehaviour {
 
     void SwapCard(CardBartok tCB)
     {
-        if (false)
-        {
-            CURRENT_PLAYER.AddCard(targetCard);//Adds the selected card to the hand
-            targetCard.callbackPlayer = null;
-            targetCard = null;
-
-            tCB.callbackPlayer = CURRENT_PLAYER;
-            MoveToTarget(tCB);
-
-            phase = TurnPhase.waiting;
-            Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
-            targetSelected = false;
-        }
-        else
-        {
             CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
             tCB.callbackPlayer = null;
             MoveToTarget(tCB);
@@ -521,27 +530,7 @@ public class Bartok : MonoBehaviour {
 
             phase = TurnPhase.waiting;
             Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
-
-
-            //string i = "1";
-            
-        }
     }
-
-
-    //public void SwapCard_AI(CardBartok tCB)
-    //{
-
-    //    CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-    //    tCB.callbackPlayer = null;
-    //    MoveToTarget(tCB);
-
-    //    CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
-    //    selectedCard.callbackPlayer = CURRENT_PLAYER;
-    //    selectedCard = null;
-
-    //    phase = TurnPhase.waiting;
-    //}
 
     public void AI_TakeTurn()
     {
@@ -609,21 +598,52 @@ public class Bartok : MonoBehaviour {
             Waiting_For_Hand_Slot_Selection = true;
         }
     }
-
-    void PowerCard_Peek()
-    {
-        //removed selectedcard
-
-        //wait for player to click card to peek at
-        //--check if the card they clicked is in their hand
-    }
-
     void PowerCard_Swap()
     {
-        //removed selectedcard
+        int myCard_player_index = -1;
+        int myCard_card_index = -1;
+        int yourCard_player_index = -1;
+        int yourCard_card_index = -1;
 
-        //wait for player to click card to swap with
-        //--check if the card they clicked is NOT in their hand
+        for (int p = 0; p < players.Count; p++)
+        {
+            for (int c = 0; c < players[p].hand.Length; c++)
+            {
+                if (players[p].hand[c] == PowerCard_Swap_mycard)
+                {
+                    myCard_player_index = p;
+                    myCard_card_index = c;
+                    break;
+                }
+            }
+        }
+
+        for (int p = 0;p < players.Count; p++)
+        {
+            for (int c = 0;c < players[p].hand.Length; c++)
+            {
+                if (players[p].hand[c] == PowerCard_Swap_yourcard)
+                {
+                    yourCard_player_index = p;
+                    yourCard_card_index = c;
+                    break;
+                }
+            }
+        }
+
+        players[yourCard_player_index].hand[yourCard_card_index] = null;
+        players[yourCard_player_index].AddCard(PowerCard_Swap_mycard);
+        PowerCard_Swap_mycard.callbackPlayer = null;
+        PowerCard_Swap_mycard = null;
+
+        players[myCard_player_index].hand[myCard_card_index] = null;
+        CURRENT_PLAYER.AddCard(PowerCard_Swap_yourcard);
+        PowerCard_Swap_yourcard.callbackPlayer = CURRENT_PLAYER;
+        PowerCard_Swap_yourcard = null;
+
+        MoveToDiscard(activePC);
+        activePC = null;
+        PowerCard_Swap_bool = false;
     }
 
     bool CardBelongsToPlayer(CardBartok tCB)
@@ -637,7 +657,6 @@ public class Bartok : MonoBehaviour {
                 return true;
             }
         }
-
         if ((tCB.state == CBState.drawpile || tCB.state == CBState.target) && (!PowerCard_Peek_bool && !PowerCard_Swap_bool)) return true;
 
         return false;
