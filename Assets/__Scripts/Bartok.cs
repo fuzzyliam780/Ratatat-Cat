@@ -25,6 +25,8 @@ public class Bartok : MonoBehaviour {
     static bool targetSelected = false;
     public bool timerComplete = false;
     static bool gameStarted = false;
+    static bool lastround = false;
+    static public Player winner = null;
 
     [Header("Set in Inspector")]
     public TextAsset deckXML;
@@ -34,6 +36,9 @@ public class Bartok : MonoBehaviour {
     public int numStartingCards = 4;
     public float drawTimeStagger = 0.1f;
     public int TURN_COUNTER = 0;
+    public int TURN_LIMIT = 32;
+    public Material[] materials;
+    public GameObject background;
 
     [Header("Set Dynamically")]
     public Deck deck;
@@ -76,6 +81,16 @@ public class Bartok : MonoBehaviour {
                 p.Flip();
             }
         }
+    }
+
+    public void Ratatcat()
+    {
+        if (TURN_COUNTER > 3 && !lastround)
+        {
+            TURN_LIMIT = TURN_COUNTER + 3;
+            lastround = true;
+        }
+        
     }
 
     List<CardBartok> UpgradeCardsList(List<Card> lCD)
@@ -156,6 +171,12 @@ public class Bartok : MonoBehaviour {
     {
         players[0].hand[0].faceUp = false;
         players[0].hand[3].faceUp = false;
+
+        players[0].hand[0].playerHandSlot = 1;
+        players[0].hand[1].playerHandSlot = 2;
+        players[0].hand[2].playerHandSlot = 3;
+        players[0].hand[3].playerHandSlot = 4;
+
         gameStarted = true;
         Invoke("DrawFirstTarget", 1 /*drawTimeStagger * (numStartingCards * 4 + 4)*/);
     }
@@ -195,10 +216,12 @@ public class Bartok : MonoBehaviour {
         {
             lastPlayerNum = CURRENT_PLAYER.playerNum;
             // Check for Game Over and need to reshuffle discards
-            if (TURN_COUNTER == 32)
+            if (TURN_COUNTER == TURN_LIMIT)
             {
                 if (CheckGameOver())
                 {
+                    TURN_LIMIT = 32;
+                    TURN_COUNTER = 0;
                     return;
                 }
             }
@@ -249,6 +272,8 @@ public class Bartok : MonoBehaviour {
         //}
         //return (false);
 
+        lastround = false;
+
         int p1_score = 0;
         int p2_score = 0;
         int p3_score = 0;
@@ -290,6 +315,7 @@ public class Bartok : MonoBehaviour {
 
         if (p1_score < p2_score && p1_score < p3_score && p1_score < p4_score)
         {
+            winner = players[0];
             phase = TurnPhase.gameOver;
             Utils.tr("Player 1 has won");
             Invoke("RestartGame", 1);
@@ -297,6 +323,7 @@ public class Bartok : MonoBehaviour {
         }
         else if(p2_score < p1_score && p2_score < p3_score && p2_score < p4_score)
         {
+            winner = players[1];
             phase = TurnPhase.gameOver;
             Utils.tr("Player 2 has won");
             Invoke("RestartGame", 1);
@@ -304,6 +331,7 @@ public class Bartok : MonoBehaviour {
         }
         else if (p3_score < p1_score && p3_score < p2_score && p3_score < p4_score)
         {
+            winner = players[2];
             phase = TurnPhase.gameOver;
             Utils.tr("Player 3 has won");
             Invoke("RestartGame", 1);
@@ -311,6 +339,7 @@ public class Bartok : MonoBehaviour {
         }
         else if (p4_score < p1_score && p4_score < p2_score && p4_score < p3_score)
         {
+            winner = players[3];
             phase = TurnPhase.gameOver;
             Utils.tr("Player 4 has won");
             Invoke("RestartGame", 1);
@@ -562,7 +591,7 @@ public class Bartok : MonoBehaviour {
 
     public void CardClicked(CardBartok tCB)
     {
-        if (!gameStarted) startgame();
+        //if (!gameStarted) startgame();
         if (PowerCard_Peek_card != null)
         {
             PowerCard_Peek_card.faceUp = false;
@@ -695,6 +724,7 @@ public class Bartok : MonoBehaviour {
 
                     if (PowerCard_Swap_myHand && CardBelongsToPlayer(tCB))
                     {
+                        background.GetComponent<Renderer>().material = materials[tCB.playerHandSlot];
                         PowerCard_Swap_mycard = tCB;
                         PowerCard_Swap_myHand = false;
                         PowerCard_Swap_yourHand = true;
@@ -703,6 +733,7 @@ public class Bartok : MonoBehaviour {
                         PowerCard_Swap_yourcard = tCB;
                         PowerCard_Swap_yourHand = false;
                         PowerCard_Swap();
+                        background.GetComponent<Renderer>().material = materials[0];
 
                     }
                     
@@ -724,17 +755,20 @@ public class Bartok : MonoBehaviour {
 
     void SwapCard(CardBartok tCB)
     {
-            CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
-            tCB.callbackPlayer = null;
-            MoveToTarget(tCB);
+        selectedCard.playerHandSlot = tCB.playerHandSlot;
+        tCB.playerHandSlot = -1;
 
-            selectedCard.faceUp = false;
-            CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
-            selectedCard.callbackPlayer = CURRENT_PLAYER;
-            selectedCard = null;
+        CURRENT_PLAYER.RemoveCard(tCB);//Removes the card from the hand
+        tCB.callbackPlayer = null;
+        MoveToTarget(tCB);
 
-            phase = TurnPhase.waiting;
-            Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
+        selectedCard.faceUp = false;
+        CURRENT_PLAYER.AddCard(selectedCard);//Adds the selected card to the hand
+        selectedCard.callbackPlayer = CURRENT_PLAYER;
+        selectedCard = null;
+
+        phase = TurnPhase.waiting;
+        Waiting_For_Hand_Slot_Selection = false;//the hand slot selected
     }
 
     public void AI_TakeTurn()

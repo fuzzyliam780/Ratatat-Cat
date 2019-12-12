@@ -36,6 +36,7 @@ public class CardBartok : Card {
     public float timeStart, timeDuration;
     public int eventualSortOrder;
     public string eventualSortLayer;
+    public int playerHandSlot = -1;
 
     // When the card is done moving, it will call reportFinishTo.SendMessage()
     public GameObject reportFinishTo = null;

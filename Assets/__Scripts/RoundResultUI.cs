@@ -20,7 +20,7 @@ public class RoundResultUI : MonoBehaviour {
             return;
         }
         // We only get here if the game is over
-        Player cP = Bartok.CURRENT_PLAYER;
+        Player cP = Bartok.winner;
         if (cP == null || cP.type == PlayerType.human)
         {
             txt.text = "";
