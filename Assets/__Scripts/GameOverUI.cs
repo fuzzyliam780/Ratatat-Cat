@@ -20,8 +20,8 @@ public class GameOverUI : MonoBehaviour {
             return;
         }
         // We only get here if the game is over
-        if (Bartok.CURRENT_PLAYER == null) return;
-        if (Bartok.CURRENT_PLAYER.type == PlayerType.human)
+        if (Bartok.winner == null) return;
+        if (Bartok.winner.type == PlayerType.human)
         {
             txt.text = "You won!";
         }
