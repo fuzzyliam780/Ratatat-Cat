@@ -148,7 +148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 120}
+  m_AnchoredPosition: {x: 0, y: 125.75}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &103142065
@@ -743,9 +743,7 @@ MonoBehaviour:
   - {fileID: 21300022, guid: 413969df1cec0a24c99d0cd3d61f1650, type: 3}
   - {fileID: 21300024, guid: 413969df1cec0a24c99d0cd3d61f1650, type: 3}
   cardBack: {fileID: 21300000, guid: a8185ed8d47594bb8a3b8e2d9233f769, type: 3}
-  cardBackGold: {fileID: 21300000, guid: 8ecf4828943064b3a96f6258b54c0f11, type: 3}
   cardFront: {fileID: 21300000, guid: 873a7658b7ec742228520c7b15510f4d, type: 3}
-  cardFrontGold: {fileID: 21300000, guid: 944dc539459fe4109b973bd4c97f68ee, type: 3}
   prefabSprite: {fileID: 100000, guid: 12a0355f16a4e3040b7c1daff1c8ed35, type: 3}
   prefabCard: {fileID: 100000, guid: ee93767be21efa14eaa16db1093e90b5, type: 3}
   xmlr:
@@ -775,6 +773,7 @@ MonoBehaviour:
   numStartingCards: 4
   drawTimeStagger: 0.1
   TURN_COUNTER: 0
+  TURN_LIMIT: 32
   materials:
   - {fileID: 2100000, guid: 80032047a0b1ce241803e37e7c07669b, type: 2}
   - {fileID: 2100000, guid: 3d38ef12a928afa419a41669b804c49a, type: 2}
@@ -994,7 +993,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1561266397}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1382180770}
+        m_MethodName: Ratatcat
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1561266397

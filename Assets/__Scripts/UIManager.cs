@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -17,5 +18,31 @@ public class UIManager : MonoBehaviour
     {
         button1.SetActive(false);
         button2.SetActive(true);
+    }
+    public void StartGame()
+    {
+        SceneManager.LoadScene("__Bartok_Scene_0");
+
+    }
+
+    public void RulesScene()
+    {
+        SceneManager.LoadScene("RulesScene");
+    }
+
+    public void StartScreen()
+    {
+        SceneManager.LoadScene("StartScene");
+
+    }
+
+    public void RulesScene2()
+    {
+        SceneManager.LoadScene("RulesScene2");
+    }
+
+    public void RulesScene3()
+    {
+        SceneManager.LoadScene("RulesScene3");
     }
 }
